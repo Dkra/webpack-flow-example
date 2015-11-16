@@ -1,5 +1,9 @@
 doctype html
 html
-  head
-    title my jade template
-  body
+	head
+		title my jade template
+	body
+		include ./partial/_header
+		.layout-1
+			| layout content
+		include ./partial/_footer

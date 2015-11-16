@@ -1,1 +1,2 @@
-var html = require("jade-html!./src/index.jade");
+var html = require("./../index.jade")();
+console.log(html);

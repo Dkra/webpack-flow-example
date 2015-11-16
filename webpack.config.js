@@ -3,11 +3,11 @@ var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var autoprefixer = require('autoprefixer');
-
+var Clean = require('clean-webpack-plugin');
+var jade = require('jade');
 module.exports = {
 	entry: {
 		app: [path.resolve('src/js/app')],
-		vendors: ['jquery'],
 	},
 	output: {
 		path: path.resolve('dist'),
@@ -27,7 +27,7 @@ module.exports = {
 			{
 				test: /\.(jade)$/,
 				exclude: /node_modules/,
-				loader: 'jade-html'
+				loader: 'jade'
 			},
 			// transplie es6 to es5
 			{
@@ -50,16 +50,18 @@ module.exports = {
 	})],
 
 	plugins: [
+		//new Clean(['dist']),
 		new ExtractTextPlugin("css/styles.[hash].css"),
-		//new HtmlWebpackPlugin({
-		//	minify: {
-		//		removeComments: true,
-		//		collapseWhitespace: true
-		//	},
-		//	template: './src/index.html',
-		//	inject: 'body'
-		//}),
-		new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.[hash].js')
+		new HtmlWebpackPlugin({
+			filename:'index.html',
+			templateContent: function(templateParams, compilation) {
+				var templateFile = path.join(__dirname, './src/index.jade');
+				compilation.fileDependencies.push(templateFile);
+			return jade.compileFile(templateFile)();
+	},
+	inject: true,
+}),
+		new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js')
 	],
 	
 	// allow require without file extension
